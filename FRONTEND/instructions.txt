@@ -1,0 +1,473 @@
+AarogyaLink Backend API Integration Instructions
+===================================================
+
+This guide provides detailed steps to integrate Teachable LLM, Google Gemini APIs,
+and Teachable Machine AI image analysis into your AarogyaLink Flask backend for 
+comprehensive health companion functionality.
+
+TABLE OF CONTENTS
+=================
+1. Prerequisites
+2. Google Gemini API Setup
+3. Teachable LLM API Setup
+4. Teachable Machine Integration (NEW!)
+5. Environment Configuration
+6. Backend Code Modifications
+7. Testing API Integration
+8. Troubleshooting
+9. Security Best Practices
+
+================================================================================
+1. PREREQUISITES
+================================================================================
+
+Before starting, ensure you have:
+- Python 3.9+ installed
+- Flask backend files in place (app.py, requirements.txt, etc.)
+- Internet connection for API calls
+- Valid email addresses for API account creation
+
+Required Files Already Created:
+✓ app.py (main Flask application)
+✓ requirements.txt (dependencies)
+✓ .env (environment variables template)
+✓ run.py (application runner)
+
+================================================================================
+2. GOOGLE GEMINI API SETUP
+================================================================================
+
+Step 2.1: Create Google AI Studio Account
+------------------------------------------
+1. Go to https://makersuite.google.com/app/apikey
+2. Sign in with your Google account
+3. Accept the terms of service
+4. Navigate to "API Key" section
+
+Step 2.2: Generate Gemini API Key
+---------------------------------
+1. Click "Create API Key" button
+2. Select or create a Google Cloud project
+3. Copy the generated API key (starts with "AIza...")
+4. Store it securely - you won't see it again
+
+Step 2.3: Verify API Access
+---------------------------
+1. Test the API key using a simple curl command:
+
+curl -H 'Content-Type: application/json' \
+     -d '{"contents":[{"parts":[{"text":"Hello"}]}]}' \
+     -X POST 'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=YOUR_API_KEY'
+
+2. You should receive a JSON response with generated content
+
+Step 2.4: Configure Gemini in Backend
+-------------------------------------
+The Gemini integration is already coded in app.py. You just need to:
+1. Add your API key to the .env file (see section 4)
+2. The HealthCompanionAPI class will automatically use it
+
+================================================================================
+3. TEACHABLE LLM API SETUP
+================================================================================
+
+Step 3.1: Contact Teachable for API Access
+-------------------------------------------
+1. Visit https://teachable.com/
+2. Contact their support or sales team
+3. Request API access for your health application
+4. Provide your use case and application details
+
+Step 3.2: Get API Credentials
+-----------------------------
+Once approved, you'll receive:
+- API key or token
+- Base URL for API endpoints
+- Documentation for available endpoints
+- Rate limiting information
+
+Step 3.3: Update Backend Code
+-----------------------------
+Current app.py has placeholder endpoints. Update these sections:
+
+In app.py, find the TEACHABLE_BASE_URL and update it:
+```python
+# Replace this placeholder URL with the actual Teachable API URL
+TEACHABLE_BASE_URL = "https://api.teachable.com/v1"  # Update this
+```
+
+Update the call_teachable_api method with correct endpoints:
+```python
+response = requests.post(
+    f"{TEACHABLE_BASE_URL}/completions",  # Update endpoint path
+    headers=TEACHABLE_HEADERS,
+    json=payload,
+    timeout=30
+)
+```
+
+Step 3.4: Test Teachable Integration
+------------------------------------
+1. Use a tool like Postman or curl to test the API
+2. Verify authentication works
+3. Test with sample health-related prompts
+
+================================================================================
+4. TEACHABLE MACHINE INTEGRATION (NEW!)
+================================================================================
+
+Step 4.1: Understanding Teachable Machine
+------------------------------------------
+Teachable Machine (teachablemachine.withgoogle.com) is Google's tool for creating
+custom machine learning models without coding. Your model URL:
+https://teachablemachine.withgoogle.com/models/ebiM39JYb/
+
+Step 4.2: Model Integration Status
+----------------------------------
+✓ TensorFlow.js libraries already integrated
+✓ Teachable Machine image library loaded
+✓ Webcam access and real-time prediction implemented
+✓ New "AI Health Scan" tab added to interface
+✓ Backend integration for health advice based on AI results
+
+Step 4.3: Features Available
+----------------------------
+1. Real-time webcam analysis
+2. Live prediction display with confidence scores
+3. Visual prediction bars and highlighting
+4. Integration with chat system for health advice
+5. Professional UI with Material Design 3
+
+Step 4.4: Customizing Your Model
+--------------------------------
+To use your own Teachable Machine model:
+1. Train your model at teachablemachine.withgoogle.com
+2. Export as "TensorFlow.js" format
+3. Update the model URL in templates/index.html:
+   ```javascript
+   const TEACHABLE_MODEL_URL = "YOUR_MODEL_URL_HERE";
+   ```
+
+Step 4.5: Testing Teachable Machine
+-----------------------------------
+1. Navigate to the "AI Health Scan" tab
+2. Click "Start AI Analysis" 
+3. Allow camera permissions
+4. Position yourself in front of the camera
+5. View real-time predictions and confidence scores
+6. Click "Get Health Advice" to send results to AI
+
+================================================================================
+5. ENVIRONMENT CONFIGURATION
+================================================================================
+
+Step 4.1: Configure .env File
+-----------------------------
+Open the .env file and replace placeholders with actual values:
+
+```
+# Google Gemini API Configuration
+GEMINI_API_KEY=AIza...your-actual-gemini-api-key-here
+
+# Teachable LLM API Configuration  
+TEACHABLE_API_KEY=your-actual-teachable-api-key-here
+TEACHABLE_BASE_URL=https://api.teachable.com/v1
+
+# Flask Configuration
+FLASK_DEBUG=True
+FLASK_HOST=0.0.0.0
+FLASK_PORT=5000
+SECRET_KEY=your-very-secure-secret-key-here
+
+# Optional: Additional API Settings
+MAX_FILE_SIZE=16777216
+UPLOAD_FOLDER=uploads
+```
+
+Step 4.2: Generate Secure Secret Key
+------------------------------------
+For the SECRET_KEY, generate a secure random string:
+
+```python
+import secrets
+print(secrets.token_hex(32))
+```
+
+Use the output as your SECRET_KEY value.
+
+Step 4.3: Verify Environment Loading
+------------------------------------
+Test that environment variables load correctly:
+
+```python
+from dotenv import load_dotenv
+import os
+load_dotenv()
+print("Gemini Key:", os.environ.get('GEMINI_API_KEY')[:10] + "..." if os.environ.get('GEMINI_API_KEY') else "Not found")
+print("Teachable Key:", os.environ.get('TEACHABLE_API_KEY')[:10] + "..." if os.environ.get('TEACHABLE_API_KEY') else "Not found")
+```
+
+================================================================================
+5. BACKEND CODE MODIFICATIONS
+================================================================================
+
+Step 5.1: Install Dependencies
+------------------------------
+Run the following command in your project directory:
+
+```bash
+pip install -r requirements.txt
+```
+
+This installs:
+- flask==2.3.3
+- flask-cors==4.0.0
+- google-generativeai==0.3.2
+- Pillow==10.1.0
+- requests==2.31.0
+- python-dotenv==1.0.0
+- werkzeug==2.3.7
+
+Step 5.2: Teachable API Customization
+-------------------------------------
+Based on Teachable's actual API documentation, you may need to modify:
+
+1. Authentication method in TEACHABLE_HEADERS:
+```python
+TEACHABLE_HEADERS = {
+    "Authorization": f"Bearer {TEACHABLE_API_KEY}",  # or "API-Key" 
+    "Content-Type": "application/json"
+}
+```
+
+2. Request payload format in call_teachable_api():
+```python
+payload = {
+    "model": "teachable-model-name",  # Update with actual model
+    "prompt": prompt,
+    "max_tokens": 1000,
+    "temperature": 0.7,
+    "context": context or {}
+}
+```
+
+3. Response parsing:
+```python
+if response.status_code == 200:
+    data = response.json()
+    return {
+        "completion": data.get("text") or data.get("response"),  # Adjust field names
+        "usage": data.get("usage", {}),
+        "model": data.get("model", "")
+    }
+```
+
+Step 5.3: Error Handling Enhancement
+------------------------------------
+Add specific error handling for each API:
+
+```python
+def handle_api_error(self, response, api_name):
+    if response.status_code == 401:
+        logger.error(f"{api_name} API: Invalid credentials")
+        return "Authentication failed. Please check API key."
+    elif response.status_code == 429:
+        logger.error(f"{api_name} API: Rate limit exceeded")
+        return "Too many requests. Please try again later."
+    elif response.status_code == 500:
+        logger.error(f"{api_name} API: Server error")
+        return "Service temporarily unavailable."
+    else:
+        logger.error(f"{api_name} API: {response.status_code} - {response.text}")
+        return "An error occurred processing your request."
+```
+
+================================================================================
+6. TESTING API INTEGRATION
+================================================================================
+
+Step 6.1: Test Server Startup
+------------------------------
+1. Open command prompt in project directory
+2. Run: python run.py
+3. Look for startup messages indicating API status
+4. Check for any error messages about missing API keys
+
+Step 6.2: Test Health Check Endpoint
+------------------------------------
+1. Open browser or use curl
+2. Navigate to: http://localhost:5000/health
+3. Verify response shows API service status:
+
+```json
+{
+  "status": "healthy",
+  "timestamp": "2024-01-01T12:00:00",
+  "services": {
+    "teachable": true,
+    "gemini": true
+  }
+}
+```
+
+Step 6.3: Test Chat Endpoint
+-----------------------------
+Use curl or Postman to test the chat API:
+
+```bash
+curl -X POST http://localhost:5000/api/chat \
+  -H "Content-Type: application/json" \
+  -d '{"message": "I have a headache and feel tired"}'
+```
+
+Expected response:
+```json
+{
+  "success": true,
+  "response": "Based on your symptoms...",
+  "source": "gemini",
+  "timestamp": "2024-01-01T12:00:00"
+}
+```
+
+Step 6.4: Test Image Upload
+---------------------------
+Test image analysis functionality:
+
+```bash
+curl -X POST http://localhost:5000/api/upload \
+  -F "file=@path/to/test-image.jpg" \
+  -F "type=image" \
+  -F "description=Test medical image"
+```
+
+Step 6.5: Test Frontend Integration
+-----------------------------------
+1. Open your browser to: http://localhost:5000
+2. Try each tab: "Type Your Problem", "Search with Image", "Say Anything"
+3. Verify chat responses appear correctly
+4. Test file upload functionality
+
+================================================================================
+7. TROUBLESHOOTING
+================================================================================
+
+Common Issues and Solutions:
+
+Issue: "Gemini API key not configured"
+Solution: 
+- Verify GEMINI_API_KEY in .env file
+- Check API key format (should start with "AIza")
+- Ensure .env file is in the same directory as app.py
+
+Issue: "Teachable API error 404"
+Solution:
+- Update TEACHABLE_BASE_URL with correct URL from documentation
+- Verify endpoint paths in call_teachable_api method
+- Check if you have proper API access permissions
+
+Issue: "CORS errors in browser"
+Solution:
+- Ensure flask-cors is installed
+- Verify CORS(app) is called in app.py
+- Check browser network tab for specific CORS errors
+
+Issue: "File upload fails"
+Solution:
+- Check file size limits (16MB default)
+- Verify supported file types in ALLOWED_EXTENSIONS
+- Ensure uploads directory has write permissions
+
+Issue: "Import errors"
+Solution:
+- Run: pip install -r requirements.txt
+- Check Python version (3.9+ required)
+- Verify virtual environment is activated
+
+================================================================================
+8. SECURITY BEST PRACTICES
+================================================================================
+
+API Key Security:
+- Never commit .env file to version control
+- Use different API keys for development and production
+- Regularly rotate API keys
+- Monitor API usage for unusual patterns
+
+File Upload Security:
+- Validate file types and sizes
+- Scan uploads for malware
+- Store uploads outside web root
+- Implement rate limiting for uploads
+
+General Security:
+- Use HTTPS in production
+- Implement request rate limiting
+- Add input validation and sanitization
+- Log security events and monitor access
+
+Production Deployment:
+- Use environment variables instead of .env file
+- Set FLASK_DEBUG=False
+- Use a production WSGI server (Gunicorn)
+- Implement proper logging and monitoring
+
+================================================================================
+9. QUICK START CHECKLIST
+================================================================================
+
+□ 1. Get Google Gemini API key from https://makersuite.google.com/app/apikey
+□ 2. Contact Teachable for API access and documentation
+□ 3. Update .env file with actual API keys
+□ 4. Install dependencies: pip install -r requirements.txt
+□ 5. Update Teachable endpoints in app.py based on their documentation
+□ 6. Test server: python run.py
+□ 7. Test health check: http://localhost:5000/health
+□ 8. Test chat API with sample message
+□ 9. Test frontend interface at http://localhost:5000
+□ 10. Verify all three tabs work correctly
+
+================================================================================
+10. NEXT STEPS
+================================================================================
+
+After successful API integration:
+
+1. Implement user authentication system
+2. Add database for chat history storage
+3. Implement speech-to-text for audio processing
+4. Add more sophisticated error handling
+5. Implement caching for API responses
+6. Add analytics and usage tracking
+7. Deploy to production environment
+8. Implement automated testing
+9. Add monitoring and alerting
+10. Create user documentation
+
+================================================================================
+SUPPORT RESOURCES
+================================================================================
+
+Google Gemini API:
+- Documentation: https://ai.google.dev/docs
+- Community: https://developers.google.com/community
+- Pricing: https://ai.google.dev/pricing
+
+Teachable LLM:
+- Contact Teachable support for documentation
+- Check their developer portal when available
+
+Flask Framework:
+- Official docs: https://flask.palletsprojects.com/
+- Tutorial: https://flask.palletsprojects.com/tutorial/
+
+For additional help:
+- Check the README.md file in your project
+- Review Flask and API documentation
+- Test with simple requests before complex implementations
+
+================================================================================
+
+Last Updated: January 2024
+Author: AarogyaLink Development Team
+Version: 1.0

@@ -1,0 +1,819 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AarogyaLink - AI Image Diagnosis</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚕️</text></svg>">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Google Material Symbols -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+    
+    <!-- Product Sans Font -->
+    <style>
+        @font-face {
+            font-family: 'Product Sans';
+            font-style: normal;
+            font-weight: 400;
+            src: local('Product Sans Regular'), url(https://fonts.gstatic.com/s/productsans/v11/u-F-xXWPtlydF9G4F_Kj1w.woff2) format('woff2');
+        }
+        @font-face {
+            font-family: 'Product Sans';
+            font-style: normal;
+            font-weight: 700;
+            src: local('Product Sans Bold'), url(https://fonts.gstatic.com/s/productsans/v11/u-F2xXWPtlydF9G4F_Kj1w.woff2) format('woff2');
+        }
+    </style>
+    
+    <style>
+        :root {
+            /* Material 3 Color Palette */
+            --md-ref-palette-primary-40: #6750A4;
+            --md-ref-palette-primary-90: #EADDFF;
+            --md-ref-palette-secondary-40: #625B71;
+            --md-ref-palette-secondary-90: #E8DEF8;
+            --md-ref-palette-tertiary-40: #7D5260;
+            --md-ref-palette-tertiary-90: #FFD8E4;
+            --md-ref-palette-neutral-6: #1C1B1F;
+            --md-ref-palette-neutral-10: #211F26;
+            --md-ref-palette-neutral-90: #E6E1E5;
+            --md-ref-palette-neutral-95: #F5EEF6;
+            --md-ref-palette-neutral-99: #FFFBFE;
+            
+            /* Material 3 Color Roles */
+            --md-sys-color-primary: var(--md-ref-palette-primary-40);
+            --md-sys-color-on-primary: #FFFFFF;
+            --md-sys-color-primary-container: var(--md-ref-palette-primary-90);
+            --md-sys-color-on-primary-container: var(--md-ref-palette-primary-40);
+            --md-sys-color-secondary: var(--md-ref-palette-secondary-40);
+            --md-sys-color-on-secondary: #FFFFFF;
+            --md-sys-color-secondary-container: var(--md-ref-palette-secondary-90);
+            --md-sys-color-on-secondary-container: var(--md-ref-palette-secondary-40);
+            --md-sys-color-tertiary: var(--md-ref-palette-tertiary-40);
+            --md-sys-color-on-tertiary: #FFFFFF;
+            --md-sys-color-tertiary-container: var(--md-ref-palette-tertiary-90);
+            --md-sys-color-on-tertiary-container: var(--md-ref-palette-tertiary-40);
+            --md-sys-color-surface: var(--md-ref-palette-neutral-99);
+            --md-sys-color-on-surface: var(--md-ref-palette-neutral-10);
+            --md-sys-color-surface-variant: var(--md-ref-palette-neutral-90);
+            --md-sys-color-on-surface-variant: var(--md-ref-palette-neutral-30);
+            --md-sys-color-outline: var(--md-ref-palette-neutral-50);
+            --md-sys-color-error: #BA1A1A;
+            --md-sys-color-on-error: #FFFFFF;
+            --md-sys-color-error-container: #FFDAD6;
+            --md-sys-color-on-error-container: #410002;
+        }
+        
+        /* Dark Theme Colors */
+        html[data-theme="dark"] {
+            --md-sys-color-primary: #BB86FC;
+            --md-sys-color-on-primary: #371E73;
+            --md-sys-color-primary-container: #4F378B;
+            --md-sys-color-on-primary-container: #EADDFF;
+        
+            --md-sys-color-secondary: #CCC2DC;
+            --md-sys-color-on-secondary: #332D41;
+            --md-sys-color-secondary-container: #4A4458;
+            --md-sys-color-on-secondary-container: #E8DEF8;
+        
+            --md-sys-color-tertiary: #EFB8C8;
+            --md-sys-color-on-tertiary: #492532;
+            --md-sys-color-tertiary-container: #633B48;
+            --md-sys-color-on-tertiary-container: #FFD8E4;
+        
+            --md-sys-color-surface: #1C1B1F;
+            --md-sys-color-on-surface: #E6E1E5;
+            --md-sys-color-surface-variant: #49454F;
+            --md-sys-color-on-surface-variant: #CAC4D0;
+        
+            --md-sys-color-outline: #938F99;
+            --md-sys-color-outline-variant: #49454F;
+            
+            --md-sys-color-error: #F2B8B5;
+            --md-sys-color-on-error: #601410;
+            --md-sys-color-error-container: #8C1D18;
+            --md-sys-color-on-error-container: #F9DEDC;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, var(--md-sys-color-surface) 0%, var(--md-sys-color-surface-variant) 100%);
+            color: var(--md-sys-color-on-surface);
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+        
+        /* Header */
+        .header {
+            background: var(--md-sys-color-surface);
+            box-shadow: 0px 1px 3px 1px rgba(0, 0, 0, 0.15), 0px 1px 2px rgba(0, 0, 0, 0.3);
+            padding: 1rem 2rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        /* Dark theme adjustments for header */
+        html[data-theme="dark"] .header {
+            box-shadow: 0px 1px 3px 1px rgba(0, 0, 0, 0.25), 0px 1px 2px rgba(0, 0, 0, 0.4);
+        }
+        
+        .logo {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            object-fit: cover;
+        }
+        
+        .header-content h1 {
+            font-family: 'Product Sans', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--md-sys-color-on-surface);
+        }
+        
+        .header-content p {
+            color: var(--md-sys-color-on-surface-variant);
+            font-size: 0.875rem;
+        }
+        
+        /* Theme Toggle Button */
+        .theme-toggle {
+            background: var(--md-sys-color-surface-container);
+            border: 1px solid var(--md-sys-color-outline);
+            border-radius: 50px;
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+            margin-left: auto;
+        }
+        
+        .theme-toggle:hover {
+            background: var(--md-sys-color-surface-container-high);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+        
+        .theme-toggle .material-symbols-outlined {
+            font-size: 20px;
+            color: var(--md-sys-color-on-surface);
+        }
+        
+        .theme-toggle-text {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--md-sys-color-on-surface);
+        }
+        
+        /* Dark theme adjustments for theme toggle */
+        html[data-theme="dark"] .theme-toggle {
+            background: var(--md-sys-color-surface-container);
+            border-color: var(--md-sys-color-outline);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+        }
+        
+        html[data-theme="dark"] .theme-toggle:hover {
+            background: var(--md-sys-color-surface-container-high);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+        }
+        
+        html[data-theme="dark"] .theme-toggle .material-symbols-outlined,
+        html[data-theme="dark"] .theme-toggle-text {
+            color: var(--md-sys-color-on-surface);
+        }
+        
+        /* Main Container */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            align-items: start;
+        }
+        
+        /* Control Panel */
+        .control-panel {
+            background: var(--md-sys-color-surface);
+            border-radius: 28px;
+            padding: 2rem;
+            box-shadow: 0px 1px 3px 1px rgba(0, 0, 0, 0.15), 0px 1px 2px rgba(0, 0, 0, 0.3);
+        }
+        
+        /* Dark theme adjustments for control panel */
+        html[data-theme="dark"] .control-panel {
+            box-shadow: 0px 1px 3px 1px rgba(0, 0, 0, 0.25), 0px 1px 2px rgba(0, 0, 0, 0.4);
+        }
+        
+        .control-panel h2 {
+            font-family: 'Product Sans', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            color: var(--md-sys-color-on-surface);
+        }
+        
+        /* Status */
+        .status {
+            background: var(--md-sys-color-primary-container);
+            color: var(--md-sys-color-on-primary-container);
+            padding: 1rem;
+            border-radius: 16px;
+            margin-bottom: 1.5rem;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        /* Buttons */
+        .button-group {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+        }
+        
+        .btn {
+            background: var(--md-sys-color-primary);
+            color: var(--md-sys-color-on-primary);
+            border: none;
+            border-radius: 100px;
+            padding: 0.75rem 1.5rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.2, 0, 0, 1);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.875rem;
+        }
+        
+        .btn:hover:not(:disabled) {
+            background: #553E87;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(103, 80, 164, 0.3);
+        }
+        
+        .btn:disabled {
+            background: var(--md-sys-color-surface-variant);
+            color: var(--md-sys-color-on-surface-variant);
+            cursor: not-allowed;
+        }
+        
+        .btn-secondary {
+            background: var(--md-sys-color-secondary);
+            color: var(--md-sys-color-on-secondary);
+        }
+        
+        .btn-secondary:hover:not(:disabled) {
+            background: #4A4458;
+        }
+        
+        /* File Upload */
+        .file-upload {
+            position: relative;
+            margin-bottom: 1.5rem;
+        }
+        
+        .file-upload input[type="file"] {
+            position: absolute;
+            opacity: 0;
+            width: 100%;
+            height: 100%;
+            cursor: pointer;
+        }
+        
+        .file-upload-label {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            background: var(--md-sys-color-tertiary-container);
+            color: var(--md-sys-color-on-tertiary-container);
+            border: 2px dashed var(--md-sys-color-tertiary);
+            border-radius: 16px;
+            padding: 2rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-align: center;
+        }
+        
+        .file-upload-label:hover {
+            background: var(--md-sys-color-tertiary);
+            color: var(--md-sys-color-on-tertiary);
+            border-color: var(--md-sys-color-tertiary);
+        }
+        
+        /* Media Container */
+        .media-container {
+            background: var(--md-sys-color-surface);
+            border-radius: 28px;
+            padding: 2rem;
+            box-shadow: 0px 1px 3px 1px rgba(0, 0, 0, 0.15), 0px 1px 2px rgba(0, 0, 0, 0.3);
+            text-align: center;
+        }
+        
+        /* Dark theme adjustments for media container */
+        html[data-theme="dark"] .media-container {
+            box-shadow: 0px 1px 3px 1px rgba(0, 0, 0, 0.25), 0px 1px 2px rgba(0, 0, 0, 0.4);
+        }
+        
+        .media-container h2 {
+            font-family: 'Product Sans', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            color: var(--md-sys-color-on-surface);
+        }
+        
+        #webcam-container, #uploaded-image-container {
+            margin-bottom: 1.5rem;
+        }
+        
+        #webcam-container canvas, #uploaded-image-container img {
+            border-radius: 16px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            max-width: 100%;
+            height: auto;
+        }
+        
+        /* Dark theme adjustments for images */
+        html[data-theme="dark"] #webcam-container canvas, 
+        html[data-theme="dark"] #uploaded-image-container img {
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+        
+        /* Results Container */
+        .results-container {
+            background: var(--md-sys-color-surface);
+            border-radius: 28px;
+            padding: 2rem;
+            box-shadow: 0px 1px 3px 1px rgba(0, 0, 0, 0.15), 0px 1px 2px rgba(0, 0, 0, 0.3);
+            margin-top: 2rem;
+        }
+        
+        /* Dark theme adjustments for results container */
+        html[data-theme="dark"] .results-container {
+            box-shadow: 0px 1px 3px 1px rgba(0, 0, 0, 0.25), 0px 1px 2px rgba(0, 0, 0, 0.4);
+        }
+        
+        .results-container h2 {
+            font-family: 'Product Sans', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            color: var(--md-sys-color-on-surface);
+        }
+        
+        /* Top Prediction */
+        #topPrediction {
+            background: linear-gradient(135deg, var(--md-sys-color-primary) 0%, #553E87 100%);
+            color: var(--md-sys-color-on-primary);
+            padding: 1.5rem;
+            border-radius: 16px;
+            margin-bottom: 1.5rem;
+            font-weight: 600;
+            font-size: 1.125rem;
+            text-align: center;
+        }
+        
+        /* Radial Progress Bars */
+        .prediction-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            background: var(--md-sys-color-surface-variant);
+            border-radius: 16px;
+            margin-bottom: 0.75rem;
+            transition: all 0.2s ease;
+        }
+        
+        .prediction-item:hover {
+            background: var(--md-sys-color-primary-container);
+            transform: translateY(-2px);
+        }
+        
+        .radial-progress {
+            position: relative;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: conic-gradient(var(--md-sys-color-primary) 0deg, var(--md-sys-color-primary) 0deg, var(--md-sys-color-surface-variant) 0deg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+        
+        .radial-progress::before {
+            content: '';
+            position: absolute;
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background: var(--md-sys-color-surface);
+        }
+        
+        .radial-progress .percentage {
+            position: relative;
+            z-index: 1;
+            font-weight: 600;
+            font-size: 0.875rem;
+            color: var(--md-sys-color-on-surface);
+        }
+        
+        .prediction-label {
+            flex: 1;
+            font-weight: 500;
+            color: var(--md-sys-color-on-surface);
+        }
+        
+        /* Body Image Background */
+        .body-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('bodyimage.png');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            opacity: 0.05;
+            z-index: -1;
+            pointer-events: none;
+        }
+        
+        /* Material Symbols */
+        .material-symbols-outlined {
+            font-family: 'Material Symbols Outlined';
+            font-weight: normal;
+            font-style: normal;
+            font-size: 20px;
+            line-height: 1;
+            letter-spacing: normal;
+            text-transform: none;
+            display: inline-block;
+            white-space: nowrap;
+            word-wrap: normal;
+            direction: ltr;
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .container {
+                grid-template-columns: 1fr;
+                padding: 1rem;
+                gap: 1rem;
+            }
+            
+            .header {
+                padding: 1rem;
+                flex-wrap: wrap;
+            }
+            
+            .control-panel, .media-container, .results-container {
+                padding: 1.5rem;
+            }
+            
+            .button-group {
+                flex-direction: column;
+            }
+            
+            .btn {
+                justify-content: center;
+            }
+            
+            .theme-toggle {
+                margin-left: 0;
+                width: 100%;
+                justify-content: center;
+            }
+        }
+        
+        /* Loading Animation */
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid var(--md-sys-color-primary-container);
+            border-radius: 50%;
+            border-top-color: var(--md-sys-color-primary);
+            animation: spin 1s ease-in-out infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        /* Fade In Animation */
+        .fade-in {
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+    <!-- Body Background Image -->
+    <div class="body-background"></div>
+    
+    <!-- Header -->
+    <header class="header">
+        <img src="/static/logo.jpg" alt="AarogyaLink Logo" class="logo">
+        <div class="header-content">
+            <h1>AI Image Diagnosis</h1>
+            <p>Upload medical images or use your camera for AI-powered analysis</p>
+        </div>
+        <!-- Theme Toggle Button -->
+        <button id="themeToggle" class="theme-toggle" onclick="toggleTheme()">
+            <span class="material-symbols-outlined">dark_mode</span>
+            <span class="theme-toggle-text">Dark Mode</span>
+        </button>
+    </header>
+    
+    <!-- Main Container -->
+    <div class="container">
+        <!-- Control Panel -->
+        <div class="control-panel">
+            <h2>Controls</h2>
+            
+            <div class="status" id="status">
+                <span class="material-symbols-outlined">psychology</span>
+                <span>Model: loading…</span>
+            </div>
+            
+            <div class="button-group">
+                <button id="startWebcamBtn" class="btn">
+                    <span class="material-symbols-outlined">videocam</span>
+                    Start Webcam
+                </button>
+                <button id="stopWebcamBtn" class="btn btn-secondary" disabled>
+                    <span class="material-symbols-outlined">videocam_off</span>
+                    Stop Webcam
+                </button>
+            </div>
+            
+            <div class="file-upload">
+                <input type="file" id="imageUpload" accept="image/*" />
+                <label for="imageUpload" class="file-upload-label">
+                    <span class="material-symbols-outlined">cloud_upload</span>
+                    <div>
+                        <div>Choose Image File</div>
+                        <small>Click to browse or drag & drop</small>
+                    </div>
+                </label>
+            </div>
+        </div>
+        
+        <!-- Media Container -->
+        <div class="media-container">
+            <h2>Preview</h2>
+            <div id="webcam-container"></div>
+            <div id="uploaded-image-container"></div>
+        </div>
+    </div>
+    
+    <!-- Results Container -->
+    <div class="results-container" id="label-container" style="display: none;">
+        <h2>Analysis Results</h2>
+        <div id="topPrediction"></div>
+        <div id="predictions-display"></div>
+    </div>
+    
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@latest/dist/tf.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@teachablemachine/image@latest/dist/teachablemachine-image.min.js"></script>
+    <script>
+        // === CONFIG ===
+        const MODEL_BASE = "https://teachablemachine.withgoogle.com/models/ebiM39JYb/";
+        // =================
+
+        // Theme toggle functionality
+        function toggleTheme() {
+            const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
+            const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+            
+            // Apply theme
+            document.documentElement.setAttribute('data-theme', newTheme);
+            
+            // Save preference
+            localStorage.setItem('theme', newTheme);
+            
+            // Update button text and icon
+            const themeToggleText = document.querySelector('.theme-toggle-text');
+            const themeToggleIcon = document.querySelector('.theme-toggle .material-symbols-outlined');
+            
+            if (newTheme === 'dark') {
+                themeToggleText.textContent = 'Light Mode';
+                themeToggleIcon.textContent = 'light_mode';
+            } else {
+                themeToggleText.textContent = 'Dark Mode';
+                themeToggleIcon.textContent = 'dark_mode';
+            }
+        }
+
+        // Initialize theme from localStorage or system preference
+        function initializeTheme() {
+            const savedTheme = localStorage.getItem('theme');
+            const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            
+            let theme = 'light';
+            if (savedTheme) {
+                theme = savedTheme;
+            } else if (systemPrefersDark) {
+                theme = 'dark';
+            }
+            
+            document.documentElement.setAttribute('data-theme', theme);
+            
+            // Update button text and icon
+            const themeToggleText = document.querySelector('.theme-toggle-text');
+            const themeToggleIcon = document.querySelector('.theme-toggle .material-symbols-outlined');
+            
+            if (theme === 'dark') {
+                themeToggleText.textContent = 'Light Mode';
+                themeToggleIcon.textContent = 'light_mode';
+            } else {
+                themeToggleText.textContent = 'Dark Mode';
+                themeToggleIcon.textContent = 'dark_mode';
+            }
+        }
+
+        let model = null;
+        let maxPredictions = 0;
+        let webcam = null;
+        let webcamPlaying = false;
+
+        async function loadModel() {
+            try {
+                const modelURL = MODEL_BASE + "model.json";
+                const metadataURL = MODEL_BASE + "metadata.json";
+                model = await tmImage.load(modelURL, metadataURL);
+                maxPredictions = model.getTotalClasses();
+
+                // Update status
+                const statusEl = document.getElementById("status");
+                statusEl.innerHTML = '<span class="material-symbols-outlined">check_circle</span><span>Model: loaded ✅</span>';
+                statusEl.style.background = 'var(--md-sys-color-tertiary-container)';
+                statusEl.style.color = 'var(--md-sys-color-on-tertiary-container)';
+
+                // Show results container
+                document.getElementById("label-container").style.display = "block";
+                document.getElementById("label-container").classList.add("fade-in");
+
+            } catch (err) {
+                const statusEl = document.getElementById("status");
+                statusEl.innerHTML = '<span class="material-symbols-outlined">error</span><span>Model: failed to load</span>';
+                statusEl.style.background = 'var(--md-sys-color-error-container)';
+                statusEl.style.color = 'var(--md-sys-color-on-error-container)';
+                console.error("Failed loading model:", err);
+            }
+        }
+
+        async function startWebcam() {
+            if (!model) {
+                await loadModel();
+            }
+            if (webcamPlaying) return;
+            webcam = new tmImage.Webcam(400, 300, true); 
+            await webcam.setup();
+            await webcam.play();
+            document.getElementById("webcam-container").appendChild(webcam.canvas);
+            webcamPlaying = true;
+            document.getElementById("startWebcamBtn").disabled = true;
+            document.getElementById("stopWebcamBtn").disabled = false;
+            window.requestAnimationFrame(webcamLoop);
+        }
+
+        function stopWebcam() {
+            if (!webcam) return;
+            webcam.stop();
+            if (webcam.canvas && webcam.canvas.parentNode) webcam.canvas.parentNode.removeChild(webcam.canvas);
+            webcamPlaying = false;
+            document.getElementById("startWebcamBtn").disabled = false;
+            document.getElementById("stopWebcamBtn").disabled = true;
+        }
+
+        async function webcamLoop() {
+            if (!webcamPlaying) return;
+            webcam.update();
+            await predict(webcam.canvas);
+            window.requestAnimationFrame(webcamLoop);
+        }
+
+        function updateRadialProgress(element, percentage) {
+            const degrees = (percentage / 100) * 360;
+            element.style.background = `conic-gradient(var(--md-sys-color-primary) 0deg, var(--md-sys-color-primary) ${degrees}deg, var(--md-sys-color-surface-variant) ${degrees}deg)`;
+        }
+
+        async function predict(inputElement) {
+            if (!model) {
+                console.warn("Model not loaded yet");
+                return;
+            }
+            try {
+                const prediction = await model.predict(inputElement);
+                
+                // Update predictions display
+                const predictionsDisplay = document.getElementById("predictions-display");
+                predictionsDisplay.innerHTML = "";
+                
+                // Sort predictions by probability
+                const sortedPredictions = prediction.sort((a, b) => b.probability - a.probability);
+                
+                sortedPredictions.forEach((pred, index) => {
+                    const percentage = Math.round(pred.probability * 100);
+                    
+                    const predictionItem = document.createElement("div");
+                    predictionItem.className = "prediction-item fade-in";
+                    predictionItem.style.animationDelay = `${index * 0.1}s`;
+                    
+                    const radialProgress = document.createElement("div");
+                    radialProgress.className = "radial-progress";
+                    
+                    const percentageSpan = document.createElement("span");
+                    percentageSpan.className = "percentage";
+                    percentageSpan.textContent = percentage + "%";
+                    
+                    const labelSpan = document.createElement("span");
+                    labelSpan.className = "prediction-label";
+                    labelSpan.textContent = pred.className;
+                    
+                    radialProgress.appendChild(percentageSpan);
+                    predictionItem.appendChild(radialProgress);
+                    predictionItem.appendChild(labelSpan);
+                    predictionsDisplay.appendChild(predictionItem);
+                    
+                    // Update radial progress after a short delay
+                    setTimeout(() => {
+                        updateRadialProgress(radialProgress, percentage);
+                    }, 100);
+                });
+                
+                // Top prediction
+                const top = prediction.reduce((a, b) => (a.probability > b.probability ? a : b));
+                document.getElementById("topPrediction").innerHTML =
+                    `<span class="material-symbols-outlined">star</span> <strong>Top Result:</strong> ${top.className} (${Math.round(top.probability * 100)}% confidence)`;
+                    
+            } catch (e) {
+                console.error("Prediction error:", e);
+            }
+        }
+
+        async function predictImage(event) {
+            const file = (event && event.target && event.target.files && event.target.files[0]) || null;
+            if (!file) return;
+            if (!model) {
+                await loadModel();
+            }
+            const img = document.createElement("img");
+            img.style.maxWidth = "400px";
+            img.style.maxHeight = "300px";
+            img.style.borderRadius = "16px";
+            img.style.boxShadow = "0 4px 12px rgba(0, 0, 0, 0.1)";
+            img.src = URL.createObjectURL(file);
+            img.onload = async () => {
+                const c = document.getElementById("uploaded-image-container");
+                c.innerHTML = "";
+                c.appendChild(img);
+                await predict(img);
+                URL.revokeObjectURL(img.src);
+            };
+        }
+
+        // Initialize
+        document.addEventListener("DOMContentLoaded", () => {
+            initializeTheme();
+            loadModel();
+            document.getElementById("startWebcamBtn").addEventListener("click", startWebcam);
+            document.getElementById("stopWebcamBtn").addEventListener("click", stopWebcam);
+            document.getElementById("imageUpload").addEventListener("change", predictImage);
+        });
+    </script>
+</body>
+</html>

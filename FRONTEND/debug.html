@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AarogyaLink Debug</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .test-section { margin: 20px 0; padding: 15px; border: 1px solid #ccc; border-radius: 5px; }
+        .success { background-color: #d4edda; border-color: #c3e6cb; }
+        .error { background-color: #f8d7da; border-color: #f5c6cb; }
+        .info { background-color: #d1ecf1; border-color: #bee5eb; }
+        button { padding: 10px 15px; margin: 5px; cursor: pointer; }
+        #console-log { background: #000; color: #0f0; padding: 10px; height: 200px; overflow-y: auto; font-family: monospace; }
+    </style>
+</head>
+<body>
+    <h1>🔧 AarogyaLink Debug Tool</h1>
+    
+    <div class="test-section info">
+        <h3>1. Libraries Loading Test</h3>
+        <div id="libraries-status">Testing...</div>
+        <button onclick="testLibraries()">Retest Libraries</button>
+    </div>
+    
+    <div class="test-section info">
+        <h3>2. Backend Connectivity Test</h3>
+        <div id="backend-status">Testing...</div>
+        <button onclick="testBackend()">Test Backend</button>
+    </div>
+    
+    <div class="test-section info">
+        <h3>3. Camera Access Test</h3>
+        <div id="camera-status">Not tested</div>
+        <button onclick="testCamera()">Test Camera</button>
+    </div>
+    
+    <div class="test-section info">
+        <h3>4. Teachable Machine Model Test</h3>
+        <div id="model-status">Not tested</div>
+        <button onclick="testModel()">Test Model Loading</button>
+    </div>
+    
+    <div class="test-section info">
+        <h3>5. Theme Toggle Test</h3>
+        <div id="theme-status">Not tested</div>
+        <button onclick="testTheme()">Test Theme Toggle</button>
+    </div>
+    
+    <div class="test-section">
+        <h3>Console Log</h3>
+        <div id="console-log"></div>
+        <button onclick="clearLog()">Clear Log</button>
+    </div>
+    
+    <div class="test-section">
+        <h3>Quick Actions</h3>
+        <button onclick="window.open('/', '_blank')">Open Main App</button>
+        <button onclick="window.open('/health', '_blank')">Test Health Endpoint</button>
+        <button onclick="location.reload()">Reload Debug Page</button>
+    </div>
+
+    <!-- Load the same libraries as main app -->
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@latest/dist/tf.min.js"></script>
+    
+
+    <script>
+        const API_BASE_URL = 'http://localhost:5000';
+
+        
+        function log(message, type = 'info') {
+            const logDiv = document.getElementById('console-log');
+            const timestamp = new Date().toLocaleTimeString();
+            const colorMap = { info: '#0f0', error: '#f00', warn: '#ff0', success: '#0f0' };
+            logDiv.innerHTML += `<div style="color: ${colorMap[type]}">[${timestamp}] ${message}</div>`;
+            logDiv.scrollTop = logDiv.scrollHeight;
+        }
+        
+        function clearLog() {
+            document.getElementById('console-log').innerHTML = '';
+        }
+        
+        function updateStatus(elementId, message, isSuccess) {
+            const element = document.getElementById(elementId);
+            element.textContent = message;
+            element.parentElement.className = `test-section ${isSuccess ? 'success' : 'error'}`;
+        }
+        
+        async function testLibraries() {
+            log('Testing library loading...', 'info');
+            let allGood = true;
+            
+            // Test TensorFlow.js
+            if (typeof tf !== 'undefined') {
+                log('✓ TensorFlow.js loaded successfully', 'success');
+            } else {
+                log('✗ TensorFlow.js not loaded', 'error');
+                allGood = false;
+            }
+            
+            // Test Teachable Machine
+            if (typeof tmImage !== 'undefined') {
+                log('✓ Teachable Machine library loaded successfully', 'success');
+            } else {
+                log('✗ Teachable Machine library not loaded', 'error');
+                allGood = false;
+            }
+            
+            updateStatus('libraries-status', 
+                allGood ? '✓ All libraries loaded successfully' : '✗ Some libraries failed to load', 
+                allGood
+            );
+        }
+        
+        async function testBackend() {
+            log('Testing backend connectivity...', 'info');
+            try {
+                const response = await fetch(`${API_BASE_URL}/health`);
+                const data = await response.json();
+                
+                if (response.ok) {
+                    log('✓ Backend is running and responding', 'success');
+                    log(`Backend status: ${data.status}`, 'info');
+                    updateStatus('backend-status', '✓ Backend connectivity OK', true);
+                } else {
+                    log('✗ Backend returned error', 'error');
+                    updateStatus('backend-status', '✗ Backend error', false);
+                }
+            } catch (error) {
+                log(`✗ Backend connection failed: ${error.message}`, 'error');
+                updateStatus('backend-status', '✗ Cannot connect to backend', false);
+            }
+        }
+        
+        async function testCamera() {
+            log('Testing camera access...', 'info');
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+                log('✓ Camera access granted', 'success');
+                updateStatus('camera-status', '✓ Camera access OK', true);
+                
+                // Stop the stream
+                stream.getTracks().forEach(track => track.stop());
+            } catch (error) {
+                log(`✗ Camera access failed: ${error.message}`, 'error');
+                updateStatus('camera-status', '✗ Camera access denied or unavailable', false);
+            }
+        }
+        
+        async function testModel() {
+            log('Testing Teachable Machine model loading...', 'info');
+            try {
+                if (typeof tmImage === 'undefined') {
+                    throw new Error('Teachable Machine library not loaded');
+                }
+                
+                const modelURL = TEACHABLE_MODEL_URL + "model.json";
+                const metadataURL = TEACHABLE_MODEL_URL + "metadata.json";
+                
+                log(`Attempting to load model from: ${modelURL}`, 'info');
+                
+                const model = await tmImage.load(modelURL, metadataURL);
+                const classes = model.getTotalClasses();
+                
+                log(`✓ Model loaded successfully with ${classes} classes`, 'success');
+                updateStatus('model-status', `✓ Model loaded (${classes} classes)`, true);
+                
+            } catch (error) {
+                log(`✗ Model loading failed: ${error.message}`, 'error');
+                updateStatus('model-status', '✗ Model loading failed', false);
+            }
+        }
+        
+        function testTheme() {
+            log('Testing theme functionality...', 'info');
+            
+            // Check if localStorage works
+            try {
+                localStorage.setItem('test', 'value');
+                localStorage.removeItem('test');
+                log('✓ localStorage available', 'success');
+            } catch (error) {
+                log('✗ localStorage not available', 'error');
+                updateStatus('theme-status', '✗ localStorage not available', false);
+                return;
+            }
+            
+            // Test theme switching
+            const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
+            const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+            
+            document.documentElement.setAttribute('data-theme', newTheme);
+            document.body.style.backgroundColor = newTheme === 'dark' ? '#1C1B1F' : '#FFFBFE';
+            document.body.style.color = newTheme === 'dark' ? '#E6E1E5' : '#211F26';
+            
+            log(`✓ Theme switched to: ${newTheme}`, 'success');
+            updateStatus('theme-status', `✓ Theme system working (${newTheme})`, true);
+        }
+        
+        // Auto-run basic tests on load
+        window.addEventListener('load', () => {
+            log('=== AarogyaLink Debug Tool Started ===', 'info');
+            testLibraries();
+            testBackend();
+        });
+        
+        // Capture console errors
+        window.addEventListener('error', (event) => {
+            log(`JavaScript Error: ${event.error.message}`, 'error');
+        });
+        
+        // Capture unhandled promise rejections
+        window.addEventListener('unhandledrejection', (event) => {
+            log(`Unhandled Promise Rejection: ${event.reason}`, 'error');
+        });
+    </script>
+</body>
+</html>

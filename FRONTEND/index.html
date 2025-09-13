@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AarogyaLink - Your Personal Health Companion</title>
+    <!-- Favicon and Google Fonts (Inter) -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚕️</text></svg>">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Google Material Symbols CDN -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+    
+    <!-- Custom Material 3 Styles -->
+    <style>
+        /* This is where the content of style.css will be */
+        :root {
+            /* ----- Material 3 Color Palette ----- */
+            /* This palette is inspired by Material 3's baseline theme. */
+        
+            /* Primary Colors */
+            --md-ref-palette-primary-40: #6750A4;
+            --md-ref-palette-primary-90: #EADDFF;
+        
+            /* Secondary Colors */
+            --md-ref-palette-secondary-40: #625B71;
+            --md-ref-palette-secondary-90: #E8DEF8;
+        
+            /* Tertiary Colors */
+            --md-ref-palette-tertiary-40: #7D5260;
+            --md-ref-palette-tertiary-90: #FFD8E4;
+        
+            /* Neutral Colors (for surfaces and text) */
+            --md-ref-palette-neutral-6: #1C1B1F;
+            --md-ref-palette-neutral-10: #211F26;
+            --md-ref-palette-neutral-90: #E6E1E5;
+            --md-ref-palette-neutral-95: #F5EEF6;
+            --md-ref-palette-neutral-99: #FFFBFE;
+        
+            /* ----- Material 3 Color Roles (Light Theme) ----- */
+            --md-sys-color-primary: var(--md-ref-palette-primary-40);
+            --md-sys-color-on-primary: #FFFFFF;
+            --md-sys-color-primary-container: var(--md-ref-palette-primary-90);
+            --md-sys-color-on-primary-container: var(--md-ref-palette-primary-10);
+        
+            --md-sys-color-secondary: var(--md-ref-palette-secondary-40);
+            --md-sys-color-on-secondary: #FFFFFF;
+            --md-sys-color-secondary-container: var(--md-ref-palette-secondary-90);
+            --md-sys-color-on-secondary-container: var(--md-ref-palette-secondary-10);
+        
+            --md-sys-color-tertiary: var(--md-ref-palette-tertiary-40);
+            --md-sys-color-on-tertiary: #FFFFFF;
+            --md-sys-color-tertiary-container: var(--md-ref-palette-tertiary-90);
+            --md-sys-color-on-tertiary-container: var(--md-ref-palette-tertiary-10);
+        
+            --md-sys-color-surface: var(--md-ref-palette-neutral-99);
+            --md-sys-color-on-surface: var(--md-ref-palette-neutral-10);
+            --md-sys-color-surface-variant: var(--md-ref-palette-neutral-90);
+            --md-sys-color-on-surface-variant: var(--md-ref-palette-neutral-30);
+        
+            --md-sys-color-outline: var(--md-ref-palette-neutral-50);
+        }
+
+        /* Add Product Sans Font */
+        @font-face {
+            font-family: 'Product Sans';
+            font-style: normal;
+            font-weight: 400;
+            src: local('Product Sans Regular'), url(https://fonts.gstatic.com/s/productsans/v11/u-F-xXWPtlydF9G4F_Kj1w.woff2) format('woff2');
+        }
+        @font-face {
+            font-family: 'Product Sans';
+            font-style: normal;
+            font-weight: 700;
+            src: local('Product Sans Bold'), url(https://fonts.gstatic.com/s/productsans/v11/u-F2xXWPtlydF9G4F_Kj1w.woff2) format('woff2');
+        }
+        
+        /* Base Styles */
+        body {
+            background-color: var(--md-sys-color-surface);
+            color: var(--md-sys-color-on-surface);
+            font-family: 'Inter', sans-serif;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+        
+        /* Material 3 Typography Scale */
+        h1, h2 {
+            font-family: 'Product Sans', sans-serif;
+            font-weight: 700;
+        }
+
+        h1 {
+            font-size: 3rem;
+            line-height: 1.25;
+        }
+        
+        h2 {
+            font-size: 2.5rem;
+            line-height: 1.25;
+        }
+        
+        h3 {
+            font-size: 1.5rem;
+            line-height: 1.5;
+            font-weight: 600;
+        }
+        
+        /* Component Styles */
+        .m3-card {
+            background-color: var(--md-sys-color-surface);
+            border-radius: 28px;
+            box-shadow: 0px 1px 3px 1px rgba(0, 0, 0, 0.15), 0px 1px 2px rgba(0, 0, 0, 0.3);
+            transition: transform 0.2s cubic-bezier(0.2, 0, 0, 1), box-shadow 0.2s cubic-bezier(0.2, 0, 0, 1);
+        }
+        .m3-card:hover {
+            transform: scale(1.02);
+            box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.2);
+        }
+        
+        .m3-button {
+            background-color: var(--md-sys-color-primary);
+            color: var(--md-sys-color-on-primary);
+            border-radius: 100px;
+            font-weight: 500;
+            transition: background-color 0.2s cubic-bezier(0.2, 0, 0, 1), transform 0.2s cubic-bezier(0.2, 0, 0, 1);
+        }
+        .m3-button:hover {
+            background-color: #553E87; /* A slightly darker primary shade on hover */
+            transform: translateY(-2px);
+        }
+        
+        .m3-input {
+            background-color: transparent;
+            border: 1px solid var(--md-sys-color-outline);
+            border-radius: 4px;
+            padding: 12px;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+        .m3-input:focus {
+            border-color: var(--md-sys-color-primary);
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(103, 80, 164, 0.25);
+        }
+        
+        /* Material Symbols Integration */
+        .material-symbols-outlined {
+            font-family: 'Material Symbols Outlined';
+            font-weight: normal;
+            font-style: normal;
+            font-size: 24px;
+            line-height: 1;
+            letter-spacing: normal;
+            text-transform: none;
+            display: inline-block;
+            white-space: nowrap;
+            word-wrap: normal;
+            direction: ltr;
+        }
+    </style>
+</head>
+
+<body class="bg-white text-gray-900 scroll-smooth">
+
+    <!-- Section 1: Navigation Bar -->
+    <header class="bg-white/90 backdrop-blur-md sticky top-0 z-50 shadow-sm">
+        <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
+            <!-- Logo and Brand Name -->
+            <a href="#hero" class="flex items-center space-x-2">
+                <div class="h-8 w-8 rounded-full bg-[var(--md-sys-color-primary)] flex items-center justify-center">
+                    <span class="text-[var(--md-sys-color-on-primary)] text-xl font-bold">A</span>
+                </div>
+                <div>
+                    <span class="font-bold text-lg block">AarogyaLink</span>
+                    <span class="text-xs text-[var(--md-sys-color-on-surface-variant)]">Your Personal Health Companion</span>
+                </div>
+            </a>
+            
+            <!-- Navigation Links -->
+            <div class="hidden md:flex space-x-8 text-[var(--md-sys-color-on-surface-variant)]">
+                <a href="#how-it-works" class="hover:text-[var(--md-sys-color-on-surface)] transition-colors duration-200">How It Works</a>
+                <a href="#why-us" class="hover:text-[var(--md-sys-color-on-surface)] transition-colors duration-200">Why Us</a>
+                <a href="#contact" class="hover:text-[var(--md-sys-color-on-surface)] transition-colors duration-200">Contact</a>
+            </div>
+
+            <!-- CTA Button -->
+            <a href="#" class="m3-button px-6 py-2 shadow-lg">
+                Get Started
+            </a>
+        </nav>
+    </header>
+
+    <!-- Section 2: Hero Section -->
+    <section id="hero" class="relative bg-[var(--md-sys-color-surface)] py-20 md:py-32">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col-reverse md:flex-row items-center justify-between">
+            <!-- Left Side: Content -->
+            <div class="w-full md:w-1/2 mt-12 md:mt-0">
+                <h1 class="text-[var(--md-sys-color-on-surface)]">
+                    Your Personal Health Companion
+                </h1>
+                <p class="mt-4 text-lg text-[var(--md-sys-color-on-surface-variant)] max-w-lg">
+                    Connect with care, whenever you need it. Securely share your health concerns and receive expert guidance, all in one place.
+                </p>
+                <a href="#" class="mt-8 inline-block px-8 py-4 text-lg m3-button shadow-lg">
+                    Get Started
+                </a>
+            </div>
+
+            <!-- Right Side: Image Placeholder -->
+            <div class="w-full md:w-1/2 flex justify-center md:justify-end">
+                <div class="w-full h-80 rounded-[28px] overflow-hidden m3-card bg-gray-200">
+                    <!-- This can be replaced with a calming illustration or a relevant image -->
+                    <img src="https://www.pexels.com/photo/person-holding-black-and-white-pen-6941098/" alt="Placeholder image for health companion" class="w-full h-full object-cover">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Section 3: How It Works -->
+    <section id="how-it-works" class="py-20 md:py-32 bg-[var(--md-sys-color-surface-variant)]">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <h2 class="text-[var(--md-sys-color-on-surface)]">Connect with Care, Your Way.</h2>
+            <p class="mt-4 text-lg text-[var(--md-sys-color-on-surface-variant)] max-w-2xl mx-auto">
+                Our platform makes it simple to share your health concerns using any format you're comfortable with.
+            </p>
+
+            <div class="mt-16 grid grid-cols-1 md:grid-cols-3 gap-8">
+                <!-- Card 1: Text Input -->
+                <div class="p-8 transform transition-transform duration-200 m3-card">
+                    <span class="material-symbols-outlined text-[var(--md-sys-color-primary)] text-[48px]">edit</span>
+                    <h3 class="mt-6 text-[var(--md-sys-color-on-surface)]">Describe Your Symptoms</h3>
+                    <p class="mt-2 text-[var(--md-sys-color-on-surface-variant)]">
+                        Simply type out what's on your mind. Our platform uses your words to connect you with the right support.
+                    </p>
+                </div>
+
+                <!-- Card 2: Image Input -->
+                <div class="p-8 transform transition-transform duration-200 m3-card">
+                    <span class="material-symbols-outlined text-[var(--md-sys-color-primary)] text-[48px]">camera</span>
+                    <h3 class="mt-6 text-[var(--md-sys-color-on-surface)]">Share a Photo</h3>
+                    <p class="mt-2 text-[var(--md-sys-color-on-surface-variant)]">
+                        Sometimes, a picture tells the whole story. Snap a photo of a rash, injury, or prescription for a visual consultation.
+                    </p>
+                </div>
+
+                <!-- Card 3: Audio Input -->
+                <div class="p-8 transform transition-transform duration-200 m3-card">
+                    <span class="material-symbols-outlined text-[var(--md-sys-color-primary)] text-[48px]">mic</span>
+                    <h3 class="mt-6 text-[var(--md-sys-color-on-surface)]">Record a Quick Message</h3>
+                    <p class="mt-2 text-[var(--md-sys-color-on-surface-variant)]">
+                        Can't type? Just record a voice message and our experts will listen and respond.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Section 4: Why AarogyaLink -->
+    <section id="why-us" class="py-20 md:py-32">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="md:text-center max-w-2xl md:mx-auto">
+                <h2 class="text-[var(--md-sys-color-on-surface)]">Health is a Partnership. We're Here to Help.</h2>
+            </div>
+            
+            <div class="mt-16 grid grid-cols-1 md:grid-cols-3 gap-12 text-center">
+                <div class="bg-gray-100 p-8 rounded-[28px] m3-card">
+                    <h4 class="text-2xl font-bold">24/7 Access</h4>
+                    <p class="mt-4 text-[var(--md-sys-color-on-surface-variant)]">Healthcare that fits your schedule, not the other way around. Get answers whenever you need them.</p>
+                </div>
+                <div class="bg-gray-100 p-8 rounded-[28px] m3-card">
+                    <h4 class="text-2xl font-bold">Privacy & Security</h4>
+                    <p class="mt-4 text-[var(--md-sys-color-on-surface-variant)]">Your health data is protected with bank-level encryption. Your privacy is our top priority.</p>
+                </div>
+                <div class="bg-gray-100 p-8 rounded-[28px] m3-card">
+                    <h4 class="text-2xl font-bold">Expert Guidance</h4>
+                    <p class="mt-4 text-[var(--md-sys-color-on-surface-variant)]">Connect with a network of verified healthcare professionals for trustworthy advice.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Section 5: Contact Form -->
+    <section id="contact" class="py-20 md:py-32 bg-[var(--md-sys-color-surface-variant)]">
+        <div class="max-w-xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <h2 class="text-[var(--md-sys-color-on-surface)]">Get In Touch</h2>
+            <p class="mt-4 text-lg text-[var(--md-sys-color-on-surface-variant)]">
+                For all non-medical inquiries, please fill out the form below.
+            </p>
+            <form class="mt-12 space-y-6">
+                <input type="text" placeholder="Your Name" class="w-full m3-input">
+                <input type="email" placeholder="Your Email" class="w-full m3-input">
+                <textarea rows="4" placeholder="Your Message" class="w-full m3-input"></textarea>
+                <button type="submit" class="w-full px-6 py-3 m3-button shadow-lg">
+                    Send Message
+                </button>
+            </form>
+        </div>
+    </section>
+
+    <!-- Section 6: Footer -->
+    <footer class="bg-gray-900 text-white py-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <p>&copy; 2024 AarogyaLink. All rights reserved.</p>
+            <div class="mt-4 space-x-4 text-sm text-gray-400">
+                <a href="#" class="hover:text-white transition-colors duration-200">Privacy Policy</a>
+                <a href="#" class="hover:text-white transition-colors duration-200">Terms of Service</a>
+            </div>
+        </div>
+    </footer>
+
+</body>
+</html>
